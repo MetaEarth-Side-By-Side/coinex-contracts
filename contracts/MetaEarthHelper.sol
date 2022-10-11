@@ -20,7 +20,21 @@ interface IMEST {
 }
 
 contract MESBSHelper {
-    IMEST public MEST = IMEST(0x9d80De61175c5224D032203134Df3d5bC8d7faE5);
+    IMEST public MEST;
+    
+    modifier onlyOwner() {
+        require(OWNER == msg.sender, "Ownable: caller is not the owner");
+        _;
+    }
+    address public OWNER; 
+    constructor(){
+        OWNER = msg.sender;
+    }
+
+    function setTokenAddress(address newTokenAddress) public onlyOwner {
+        MEST = IMEST(newTokenAddress);
+    }
+
     function getEstates(address owner, uint from, uint num)
         public
         view
@@ -49,5 +63,10 @@ contract MESBSHelper {
     
     function getTilesFromTokenId(uint tokenId) public view returns(uint[] memory){
         return MEST.tokenIdToTiles(tokenId);
+    }
+
+    function getTokenData(uint tokenId) public view returns(string memory tokenName, uint[] memory tiles){
+        tokenName = MEST.tokenIdToName(tokenId);
+        tiles = getTilesFromTokenId(tokenId);
     }
 }
