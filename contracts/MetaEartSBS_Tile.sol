@@ -1686,4 +1686,39 @@ contract MetaEarthSBS_ESTATE is
         uint256 amount = IERC20(_token).balanceOf(address(this));
         IERC20(_token).transfer(msg.sender, amount);
     }
+
+    function getEstates(address owner, uint from, uint num)
+        public
+        view
+        returns (uint[] memory)
+    {
+        uint[] memory tokenIds = new uint[](num);
+        for(uint i = 0; i < num; i++){
+            uint tokenId = tokenOfOwnerByIndex(owner, i + from);
+            tokenIds[i] = tokenId;
+        }
+        return tokenIds;
+    }
+
+    function getTokenIdOfTiles(uint[] memory tiles)
+        public
+        view
+        returns (uint[] memory)
+    {
+        uint[] memory tokenIds = new uint[](tiles.length);
+        for (uint i = 0; i < tiles.length; i++) {
+            uint currentTile = tiles[i];
+            tokenIds[i] = tileToTokenId[currentTile];
+        }
+        return tokenIds;
+    }
+    
+    function getTilesFromTokenId(uint tokenId) public view returns(uint[] memory){
+        return tokenIdToTiles[tokenId];
+    }
+
+    function getTokenData(uint tokenId) public view returns(string memory tokenName, uint[] memory tiles){
+        tokenName = tokenIdToName[tokenId];
+        tiles = getTilesFromTokenId(tokenId);
+    }
 }
